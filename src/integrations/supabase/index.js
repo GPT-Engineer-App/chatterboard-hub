@@ -19,56 +19,53 @@ const fromSupabase = async (query) => {
 
 /* supabase integration types
 
-### BulletinNotes
+// EXAMPLE TYPES SECTION
+// DO NOT USE TYPESCRIPT
 
-| name       | type                     | format | required |
-|------------|--------------------------|--------|----------|
-| id         | integer                  | bigint | true     |
-| created_at | string                   | timestamp with time zone | true     |
-| note       | string                   | text   | false    |
-| author     | string                   | text   | false    |
-| colour     | string                   | text   | false    |
-| heading    | string                   | text   | false    |
+### foos
 
+| name    | type | format | required |
+|---------|------|--------|----------|
+| id      | int8 | number | true     |
+| title   | text | string | true     |
+| date    | date | string | true     |
+
+### bars
+
+| name    | type | format | required |
+|---------|------|--------|----------|
+| id      | int8 | number | true     |
+| foo_id  | int8 | number | true     |  // foreign key to foos
+	
 */
 
-export const useBulletinNotes = () => useQuery({
-    queryKey: ['bulletinNotes'],
-    queryFn: () => fromSupabase(supabase.from('BulletinNotes').select('*')),
-});
+// Example hook for models
 
-export const useAddBulletinNote = () => {
+export const useFoo = ()=> useQuery({
+    queryKey: ['foos'],
+    queryFn: fromSupabase(supabase.from('foos')),
+})
+export const useAddFoo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newNote) => fromSupabase(supabase.from('BulletinNotes').insert([newNote])),
-        onSuccess: () => {
-            queryClient.invalidateQueries('bulletinNotes');
+        mutationFn: (newFoo)=> fromSupabase(supabase.from('foos').insert([{ title: newFoo.title }])),
+        onSuccess: ()=> {
+            queryClient.invalidateQueries('foos');
         },
     });
 };
 
-export const useUpdateBulletinNote = () => {
+export const useBar = ()=> useQuery({
+    queryKey: ['bars'],
+    queryFn: fromSupabase(supabase.from('bars')),
+})
+export const useAddBar = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('BulletinNotes').update(updateData).eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('bulletinNotes');
+        mutationFn: (newBar)=> fromSupabase(supabase.from('bars').insert([{ foo_id: newBar.foo_id }])),
+        onSuccess: ()=> {
+            queryClient.invalidateQueries('bars');
         },
     });
 };
 
-export const useDeleteBulletinNote = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id) => fromSupabase(supabase.from('BulletinNotes').delete().eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('bulletinNotes');
-        },
-    });
-};
-
-export const useBulletinNote = (id) => useQuery({
-    queryKey: ['bulletinNote', id],
-    queryFn: () => fromSupabase(supabase.from('BulletinNotes').select('*').eq('id', id).single()),
-    enabled: !!id,
-});
