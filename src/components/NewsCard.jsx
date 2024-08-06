@@ -1,23 +1,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRef, useEffect, useState } from 'react';
 
 const NewsCard = ({ title, image, name, date, content, colour }) => {
-  const getContrastColor = (hexColor) => {
-    // Convert hex to RGB
-    const r = parseInt(hexColor.slice(1, 3), 16);
-    const g = parseInt(hexColor.slice(3, 5), 16);
-    const b = parseInt(hexColor.slice(5, 7), 16);
-    
-    // Calculate luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
-    // Return black for light colors, white for dark colors
-    return luminance > 0.5 ? 'text-gray-800' : 'text-white';
-  };
+  const [textColorClass, setTextColorClass] = useState('text-gray-800');
+  const cardRef = useRef(null);
 
-  const textColorClass = getContrastColor(colour);
+  useEffect(() => {
+    const getContrastColor = (backgroundColor) => {
+      const rgb = backgroundColor.match(/\d+/g);
+      if (rgb) {
+        const [r, g, b] = rgb.map(Number);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.5 ? 'text-gray-800' : 'text-white';
+      }
+      return 'text-gray-800'; // Default to dark text if color parsing fails
+    };
+
+    if (cardRef.current) {
+      const computedStyle = window.getComputedStyle(cardRef.current);
+      const backgroundColor = computedStyle.backgroundColor;
+      setTextColorClass(getContrastColor(backgroundColor));
+    }
+  }, [colour]);
 
   return (
-    <Card className={`overflow-hidden transition-colors duration-300 ${textColorClass}`} style={{ backgroundColor: colour }}>
+    <Card ref={cardRef} className={`overflow-hidden transition-colors duration-300 ${textColorClass}`} style={{ backgroundColor: colour }}>
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <CardHeader>
         <CardTitle>{title || 'Untitled'}</CardTitle>
