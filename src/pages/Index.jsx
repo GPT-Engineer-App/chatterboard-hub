@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import NewsCard from '../components/NewsCard';
 import { useBulletinNotes } from '../integrations/supabase';
@@ -6,11 +6,41 @@ import { useBulletinNotes } from '../integrations/supabase';
 const Index = () => {
   const [filter, setFilter] = useState('');
   const { data: bulletinNotes, isLoading, isError } = useBulletinNotes();
+  const [notes, setNotes] = useState([]);
 
-  const filteredNotes = bulletinNotes?.filter(note =>
+  useState(() => {
+    if (bulletinNotes) {
+      setNotes(bulletinNotes);
+    }
+  }, [bulletinNotes]);
+
+  const filteredNotes = notes.filter(note =>
     note.heading?.toLowerCase().includes(filter.toLowerCase()) ||
     note.note?.toLowerCase().includes(filter.toLowerCase())
-  ) || [];
+  );
+
+  const handleDragStart = (e, id) => {
+    e.dataTransfer.setData('text/plain', id);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = useCallback((e, targetId) => {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text');
+    const draggedIndex = notes.findIndex(note => note.id === parseInt(draggedId));
+    const targetIndex = notes.findIndex(note => note.id === targetId);
+
+    if (draggedIndex === targetIndex) return;
+
+    const newNotes = [...notes];
+    const [reorderedItem] = newNotes.splice(draggedIndex, 1);
+    newNotes.splice(targetIndex, 0, reorderedItem);
+
+    setNotes(newNotes);
+  }, [notes]);
 
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (isError) return <div className="text-center mt-8 text-red-500">Error loading bulletin notes</div>;
@@ -35,12 +65,16 @@ const Index = () => {
           {filteredNotes.map(note => (
             <NewsCard
               key={note.id}
+              id={note.id}
               title={note.heading}
               image="/placeholder.svg"
               name={note.author}
               date={new Date(note.created_at).toLocaleDateString()}
               content={note.note}
               colour={note.colour}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
             />
           ))}
         </div>

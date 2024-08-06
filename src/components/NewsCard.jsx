@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRef, useEffect, useState } from 'react';
 
-const NewsCard = ({ title, image, name, date, content, colour }) => {
+const NewsCard = ({ id, title, image, name, date, content, colour, onDragStart, onDragOver, onDrop }) => {
   const [textColorClass, setTextColorClass] = useState('text-gray-800');
   const cardRef = useRef(null);
 
@@ -24,7 +24,15 @@ const NewsCard = ({ title, image, name, date, content, colour }) => {
   }, [colour]);
 
   return (
-    <Card ref={cardRef} className={`overflow-hidden transition-colors duration-300 ${textColorClass}`} style={{ backgroundColor: colour }}>
+    <Card 
+      ref={cardRef} 
+      className={`overflow-hidden transition-colors duration-300 ${textColorClass} cursor-move`} 
+      style={{ backgroundColor: colour }}
+      draggable="true"
+      onDragStart={(e) => onDragStart(e, id)}
+      onDragOver={(e) => onDragOver(e)}
+      onDrop={(e) => onDrop(e, id)}
+    >
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <CardHeader>
         <CardTitle>{title || 'Untitled'}</CardTitle>
