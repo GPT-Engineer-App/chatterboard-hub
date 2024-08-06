@@ -40,7 +40,7 @@ const Index = () => {
               name={note.author}
               date={new Date(note.created_at).toLocaleDateString()}
               content={note.note}
-              grade={note.colour}
+              colour={note.colour}
             />
           ))}
         </div>
