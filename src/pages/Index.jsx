@@ -12,20 +12,6 @@ const Index = () => {
     note.note?.toLowerCase().includes(filter.toLowerCase())
   ) || [];
 
-  const getColorName = (colour) => {
-    const colorMap = {
-      '#FF0000': 'red',
-      '#0000FF': 'blue',
-      '#00FF00': 'green',
-      '#FFFF00': 'yellow',
-      '#800080': 'purple',
-      '#FFC0CB': 'pink',
-      '#4B0082': 'indigo',
-      '#808080': 'gray',
-    };
-    return colorMap[colour] || 'gray';
-  };
-
   if (isLoading) return <div className="text-center mt-8">Loading...</div>;
   if (isError) return <div className="text-center mt-8 text-red-500">Error loading bulletin notes</div>;
 
@@ -54,7 +40,7 @@ const Index = () => {
               name={note.author}
               date={new Date(note.created_at).toLocaleDateString()}
               content={note.note}
-              colour={getColorName(note.colour)}
+              colour={note.colour}
             />
           ))}
         </div>
