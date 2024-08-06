@@ -36,7 +36,6 @@ const Index = () => {
             <NewsCard
               key={note.id}
               title={note.heading}
-              image="/placeholder.svg"
               name={note.author}
               date={new Date(note.created_at).toLocaleDateString()}
               content={note.note}
