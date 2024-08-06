@@ -23,25 +23,18 @@ const fromSupabase = async (query) => {
 
 | name       | type                     | format | required |
 |------------|--------------------------|--------|----------|
-| id         | bigint                   | number | true     |
-| created_at | timestamp with time zone | string | true     |
-| note       | text                     | string | false    |
-| author     | text                     | string | false    |
-| colour     | text                     | string | false    |
-| heading    | text                     | string | false    |
+| id         | integer                  | bigint | true     |
+| created_at | string                   | timestamp with time zone | true     |
+| note       | string                   | text   | false    |
+| author     | string                   | text   | false    |
+| colour     | string                   | text   | false    |
+| heading    | string                   | text   | false    |
 
 */
-
-// Hooks for BulletinNotes
 
 export const useBulletinNotes = () => useQuery({
     queryKey: ['bulletinNotes'],
     queryFn: () => fromSupabase(supabase.from('BulletinNotes').select('*')),
-});
-
-export const useBulletinNote = (id) => useQuery({
-    queryKey: ['bulletinNotes', id],
-    queryFn: () => fromSupabase(supabase.from('BulletinNotes').select('*').eq('id', id).single()),
 });
 
 export const useAddBulletinNote = () => {
@@ -73,3 +66,9 @@ export const useDeleteBulletinNote = () => {
         },
     });
 };
+
+export const useBulletinNote = (id) => useQuery({
+    queryKey: ['bulletinNote', id],
+    queryFn: () => fromSupabase(supabase.from('BulletinNotes').select('*').eq('id', id).single()),
+    enabled: !!id,
+});
