@@ -23,12 +23,12 @@ const fromSupabase = async (query) => {
 
 | name       | type                     | format | required |
 |------------|--------------------------|--------|----------|
-| id         | int8                     | number | true     |
-| created_at | timestamp with time zone | string | true     |
-| author     | text                     | string | false    |
-| colour     | text                     | string | false    |
-| heading    | text                     | string | false    |
-| note       | text                     | string | false    |
+| id         | integer                  | bigint | true     |
+| created_at | string                   | timestamp with time zone | true     |
+| note       | string                   | text   | false    |
+| author     | string                   | text   | false    |
+| colour     | string                   | text   | false    |
+| heading    | string                   | text   | false    |
 
 */
 

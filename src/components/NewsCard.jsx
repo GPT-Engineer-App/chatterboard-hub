@@ -1,48 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRef, useEffect, useState } from 'react';
 
-const NewsCard = ({ id, title, image, name, date, content, colour, onDragStart, onDragOver, onDrop }) => {
-  const [textColorClass, setTextColorClass] = useState('text-gray-800');
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    const getContrastColor = (backgroundColor) => {
-      const rgb = backgroundColor.match(/\d+/g);
-      if (rgb) {
-        const [r, g, b] = rgb.map(Number);
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        return luminance > 0.5 ? 'text-gray-800' : 'text-white';
-      }
-      return 'text-gray-800'; // Default to dark text if color parsing fails
-    };
-
-    if (cardRef.current) {
-      const computedStyle = window.getComputedStyle(cardRef.current);
-      const backgroundColor = computedStyle.backgroundColor;
-      setTextColorClass(getContrastColor(backgroundColor));
-    }
-  }, [colour]);
+const NewsCard = ({ title, image, name, date, content, colour }) => {
+  const isLightColor = colour === '#FFFFFF' || colour === 'white';
+  const textColorClass = isLightColor ? 'text-black' : 'text-white';
 
   return (
-    <Card 
-      ref={cardRef} 
-      className={`overflow-hidden transition-colors duration-300 ${textColorClass} cursor-move`} 
-      style={{ backgroundColor: colour }}
-      draggable="true"
-      onDragStart={(e) => onDragStart(e, id)}
-      onDragOver={(e) => onDragOver(e)}
-      onDrop={(e) => onDrop(e, id)}
-    >
+    <Card className={`overflow-hidden transition-colors duration-300 ${textColorClass}`} style={{ backgroundColor: colour }}>
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <CardHeader>
         <CardTitle>{title || 'Untitled'}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm opacity-80 mb-2">Author</p>
+        <p className={`text-sm ${isLightColor ? 'opacity-60' : 'opacity-80'} mb-2`}>Author</p>
         <p className="font-semibold mb-4">{name || 'Anonymous'}</p>
-        <p className="text-sm opacity-80 mb-2">Date</p>
+        <p className={`text-sm ${isLightColor ? 'opacity-60' : 'opacity-80'} mb-2`}>Date</p>
         <p className="font-semibold mb-4">{date}</p>
-        <p className="text-sm opacity-80 mb-2">Content</p>
+        <p className={`text-sm ${isLightColor ? 'opacity-60' : 'opacity-80'} mb-2`}>Content</p>
         <p className="mb-4">{content}</p>
       </CardContent>
     </Card>
